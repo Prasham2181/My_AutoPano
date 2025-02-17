@@ -1,6 +1,7 @@
 # MyAutoPano - Panorama Image Stitching
-RBE/CS Fall 2022: Classical and Deep Learning Approaches for Geometric Computer Vision
+RBE/CS Spring 2025: Classical and Deep Learning Approaches for Geometric Computer Vision
 
+MyAutoPano is an end-to-end project that explores panorama stitching using both classical computer vision techniques and modern deep learning approaches. The project is divided into two phases: one focusing on traditional feature-based methods and the other on deep learning-based homography estimation.
 ## Team Members - Group 19
 - Prasham Soni
 - Sarthak Mehta
@@ -27,104 +28,107 @@ Group19_p1/
 
 ```
 
-## Overview
+
+
 ---
 
-## **Overview**
-This project explores **Deep Learning-based Panorama Stitching**, extending **classical feature-based homography estimation (Phase 1)** with **Supervised and Unsupervised Learning Approaches**. Instead of relying on **corner detection and feature matching**, deep neural networks are trained to estimate homographies between overlapping images.
+## Overview
+
+MyAutoPano implements panorama stitching by combining:
+- **Phase 1:** Classical feature-based techniques using methods like Harris corner detection, Adaptive Non-Maximal Suppression (ANMS), feature descriptor extraction, feature matching, RANSAC for homography estimation, and image blending.
+- **Phase 2:** Deep learning-based homography estimation using both **supervised** and **unsupervised** approaches, where a CNN predicts homography parameters from image patches and refines the prediction using a differentiable warping layer.
 
 ---
 
 ## **Phase 1: Classical Feature-Based Panorama Stitching**
+
 1. **Corner Detection**  
    - Uses **Harris corner detection** to identify key points in images.
 
 2. **ANMS (Adaptive Non-Maximal Suppression)**  
-   - Selects the best corner points while maintaining spatial distribution.
+   - Selects the best corner points ensuring spatial uniformity across the image.
 
 3. **Feature Descriptor & Matching**  
-   - Generates **SIFT feature descriptors** for keypoints.
-   - Matches features using **the ratio test**.
+   - Generates feature descriptors (e.g., SIFT) and matches features using the ratio test.
 
 4. **Homography Estimation using RANSAC**  
-   - Eliminates outliers and computes the **global homography matrix**.
+   - Eliminates outliers and computes a global homography matrix.
 
 5. **Image Warping & Blending**  
-   - Warps images using **perspective transformation**.
-   - Blends the images to generate the panorama.
+   - Applies perspective transformation to warp images and blends them to form a seamless panorama.
 
+**Outputs:**  
+- Original example images (50+ images) are provided in `Original_54_images.zip` (downloadable).  
+- Example panorama output:  
+  <p align="center">
+    <img src="Output/mypano_58.png" alt="Panorama Example" style="width: 250px;"/>
+    <br/>
+    <em>Generated panorama using the classical approach</em>
+  </p>
 
-Outputs
-# Original example images (count 50+) are stored in Original_54_images.zip which can be downloaded 
-
-Panaroma Generated for the example images:
-<p align="center">
-  <table>
-    <tr>
-      <td> <img src="Output/mypano_58.png" alt="Image 1" style="width: 250px;"/> </td>
-      
-    </tr>
-    <tr>
-      <td align="center">Texton Map</td>
-      
-    </tr>
-  </table>
-</p>
 ---
 
 ## **Phase 2: Deep Learning-Based Homography Estimation**
+
 ### ✅ **Supervised Learning Approach**
-- The **Supervised Homography Network (HomographyNet.py)** is trained on **128×128 patches**.
-- The model **predicts 4-point displacement vectors (H4Pt)** instead of directly computing homographies.
-- Uses **Direct Linear Transformation (DLT)** to convert **H4Pt** into a **homography matrix**.
-- Predicted homographies are applied **patch-wise**, leading to **local alignment inconsistencies**.
+- The **Supervised Homography Network** (in `HomographyNet.py`) is trained on **128×128 patches**.
+- The model predicts 4-point displacement vectors (H4Pt) which are then converted into a full homography matrix using Direct Linear Transformation (DLT).
+- Predicted homographies are applied patch-wise, which may introduce some local alignment inconsistencies.
 
 ### 🤖 **Unsupervised Learning Approach**
-- The **Unsupervised Homography Network (Unsupervised_HomographyNet.py)** learns to predict the **homography matrix (H_pred)** end-to-end.
-- Uses a **self-supervised loss function**, minimizing the difference between warped images.
-- The model struggled to **converge**, leading to **overlapping but misaligned images**.
-- The loss function **did not stabilize**, making training unreliable.
+- The **Unsupervised Homography Network** (in `Unsupervised_HomographyNet.py`) directly predicts the homography matrix (H_pred) in an end-to-end manner.
+- A self-supervised loss function minimizes the difference between the warped image and the target image.
+- While the approach produces overlapping images, training can be challenging as the loss function may not stabilize.
 
 ---
 
-## **Algorithm Pipeline**
+## ** Phase 2: Deep Learning:Algorithm Pipeline**
+
 ### **Supervised Learning Pipeline**
 1. **Patch Extraction**  
-   - Extracts **128×128 patches** from images and computes their transformations.
-   
+   - Extracts 128×128 patches from the images.
 2. **CNN-Based Homography Prediction**  
-   - The model predicts **H4Pt displacements** between patches.
-   - Uses **DLT** to compute the **homography matrix**.
-
+   - Predicts H4Pt displacements from which the homography matrix is computed using DLT.
 3. **Warping & Blending**  
-   - Warps patches using predicted homographies.
-   - Aggregates local transformations to construct the final panorama.
+   - Applies the predicted homographies to warp patches and blends them to construct the final panorama.
 
 ### **Unsupervised Learning Pipeline**
 1. **Feature Learning Without Ground Truth**  
-   - Directly estimates the **homography matrix** using CNN.
-   - Uses a **loss function** to compare the warped and target images.
-
+   - Directly estimates the homography matrix from image patches using CNN.
 2. **Image Warping**  
-   - The predicted homography is applied to **warp one image onto another**.
-
+   - Warps one image onto another using the predicted homography.
 3. **Blending & Panorama Stitching**  
-   - Final images are merged using **weighted blending**.
-   - Unsupervised training struggled with **alignment stability**.
+   - Merges images using weighted blending. Note: The unsupervised model may struggle with alignment stability.
 
 ---
 
 ## **Requirements**
+
 - Python 3.x  
 - OpenCV (`cv2`)  
 - NumPy  
 - PyTorch  
 - Matplotlib  
 
+*Ensure you have the correct versions installed for compatibility.*
+
 ---
 
 ## **Usage**
-1. Place input images in `Data/Test/`
-2. Run the **wrapper script** to choose between **Supervised or Unsupervised** methods:
+
+1. **Input Data:**  
+   - Place your input images in the appropriate directory (e.g., `Data/Test/`).
+
+2. **Phase 1 - Classical Stitching:**  
+   Run the classical stitching pipeline:
    ```bash
-   python Wrapper.py
+   python Phase1/Code/wrapper.py --input_dir "Data/Test/" --output "Output/final_panorama.jpg"
+
+2. **Phase 2 - Deep Learning Homography Estimation:**  
+   Switch Between Approaches:
+
+      The main wrapper script (Phase2/Code/Wrapper.py) allows you to choose between supervised and unsupervised methods via command-line arguments.
+      Training:
+   ```bash
+      python Phase2/Code/Train.py --ModelType supervised  # or "unsupervised"
+
