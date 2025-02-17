@@ -53,6 +53,23 @@ This project explores **Deep Learning-based Panorama Stitching**, extending **cl
    - Warps images using **perspective transformation**.
    - Blends the images to generate the panorama.
 
+
+Outputs
+# Original example images (count 50+) are stored in Original_54_images.zip which can be downloaded 
+
+Panaroma Generated for the example images:
+<p align="center">
+  <table>
+    <tr>
+      <td> <img src="Output/mypano_58.png" alt="Image 1" style="width: 250px;"/> </td>
+      
+    </tr>
+    <tr>
+      <td align="center">Texton Map</td>
+      
+    </tr>
+  </table>
+</p>
 ---
 
 ## **Phase 2: Deep Learning-Based Homography Estimation**
