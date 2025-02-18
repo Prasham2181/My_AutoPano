@@ -82,7 +82,7 @@ MyAutoPano implements panorama stitching by combining:
 
 ---
 
-## ** Phase 2: Deep Learning:Algorithm Pipeline**
+## Phase 2: Algorithm Pipeline
 
 ### **Supervised Learning Pipeline**
 1. **Patch Extraction**  
